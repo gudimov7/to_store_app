@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_admin_dash.xml" value="0.25" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_admin_purchase_dash.xml" value="1.2178571428571427" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_in_store.xml" value="0.25" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_register.xml" value="0.25" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_user_cart.xml" value="0.25" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_13" default="true" project-jdk-name="13" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "32233343726",
+    "firebase_url": "https://toystoreapp-edbfc-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "toystoreapp-edbfc",
+    "storage_bucket": "toystoreapp-edbfc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:32233343726:android:4e65601c362d55267d01ff",
+        "android_client_info": {
+          "package_name": "com.example.toy_store_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "32233343726-74mqk6po4pinkid50ot5dp6nfg76hsmh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcYG2F_kDnqKRfFn_8_O9URrIxYQQQSRM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "32233343726-74mqk6po4pinkid50ot5dp6nfg76hsmh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

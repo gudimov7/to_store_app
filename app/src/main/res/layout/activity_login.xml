@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:gravity="center"
+    tools:context=".loginActivity">
+
+    <!-- store logo -->
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        android:src="@drawable/store_logo" />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+    <!-- username input -->
+    <EditText
+        android:id="@+id/loginActivity_et_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="USERNAME:"
+        android:autofillHints="emailAddress"
+        android:padding="10dp"/>
+    <!-- password with checkbox layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <!-- password input -->
+        <EditText
+            android:id="@+id/loginActivity_et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="PASSWORD:"
+            android:autofillHints="emailAddress"
+            android:inputType="textPassword"
+            android:padding="10dp"/>
+        <!-- password checkbox -->
+        <CheckBox
+            android:id="@+id/loginActivity_sb_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9" />
+    </LinearLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+    <!-- login button -->
+    <Button
+        android:id="@+id/loginActivity_btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="login" />
+    <!-- anonymous login button -->
+    <Button
+        android:id="@+id/loginActivity_btn_anonymous"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="anonymous" />
+    <!-- register button -->
+    <Button
+        android:id="@+id/loginActivity_btn_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="register" />
+</LinearLayout>
