@@ -52,10 +52,14 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(new Intent(LoginActivity.this,InStoreActivity.class));
                     }
                     toast(this,"Login successfully");
-                    log(LoginActivity.class,FirebaseAT.getAuth().getUid() + ": logged in successfully");
-                    logToFireBase(this,FirebaseAT.getAuth().getUid() + ": logged in successfully");
+                    log(LoginActivity.class,username + ": logged in successfully");
+                    logToFireBase(this,username + ": logged in successfully");
                     finish();
-                }).addOnFailureListener(authResult -> toast(this, "login denied"));
+                }).addOnFailureListener(authResult -> {
+                    toast(this, "login denied");
+                    log(LoginActivity.class,username + ": logg in failed");
+                    logToFireBase(this,username + ": logg in failed");
+                });
 
             } else {
                 toast(this,"Please enter username and password");

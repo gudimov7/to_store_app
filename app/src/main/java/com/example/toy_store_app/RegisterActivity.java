@@ -77,6 +77,8 @@ public class RegisterActivity extends AppCompatActivity {
                     finish();
                 }).addOnFailureListener(authResult -> {
                     toast(this,"User create failed");
+                    log(LoginActivity.class,email + ": registered failed");
+                    logToFireBase(this,email + ": registered failed");
                 });
 
             } else {

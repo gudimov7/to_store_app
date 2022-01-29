@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="10">
+    <!-- pic and description layout-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:weightSum="10">
+        <!-- item image-->
+        <ImageButton
+            android:id="@+id/adminStoreItem_dialog_iv_itemPic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="6.6"/>
+        <!-- item description layout-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="3.3" >
+            <!-- name input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Name:"/>
+            <!-- age input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Age:"
+                android:inputType="number"/>
+            <!-- color input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Color:"/>
+            <!-- material input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemMaterial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Material:"/>
+            <!-- price input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemMade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Made in:" />
+            <!-- price input-->
+            <EditText
+                android:id="@+id/adminStoreItem_dialog_et_itemPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Price:"
+                android:inputType="numberDecimal"/>
+        </LinearLayout>
+    </LinearLayout>
+    <!-- buttons layout-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="9"
+        android:weightSum="7">
+        <!-- add button-->
+        <Button
+            android:id="@+id/adminStoreItem_dialog_btn_clear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="clear" />
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3" />
+        <!-- add button-->
+        <Button
+            android:id="@+id/adminStoreItem_dialog_btn_add"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="add" />
+    </LinearLayout>
+</LinearLayout>
