@@ -14,6 +14,7 @@ import com.example.toy_store_app.firebase.FirebaseDB;
 import java.util.Calendar;
 
 public abstract class FF {
+    public static final String ADMIN_PASS = "123456";
     private static final String LOG = "LOG";
     public static void toast(Context context,String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();

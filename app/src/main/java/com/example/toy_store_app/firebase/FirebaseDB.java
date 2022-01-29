@@ -7,6 +7,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.Calendar;
 
 public class FirebaseDB {
+    public static final String USERS_CHILD = "Users";
+    public static final String FIREBASE_LOG = "LOG";
     private static FirebaseDatabase database;
 
     private FirebaseDB() { }
