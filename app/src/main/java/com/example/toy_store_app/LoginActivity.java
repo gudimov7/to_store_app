@@ -46,11 +46,16 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordET.getText().toString();
 
                 FirebaseAT.getAuth().signInWithEmailAndPassword(username, password).addOnSuccessListener(authResult -> {
+                    if (adminCB.isChecked()) {
+                        startActivity(new Intent(LoginActivity.this,AdminDashActivity.class));
+                    } else {
+                        startActivity(new Intent(LoginActivity.this,InStoreActivity.class));
+                    }
                     toast(this,"Login successfully");
                     log(LoginActivity.class,FirebaseAT.getAuth().getUid() + ": logged in successfully");
                     logToFireBase(this,FirebaseAT.getAuth().getUid() + ": logged in successfully");
+                    finish();
                 }).addOnFailureListener(authResult -> toast(this, "login denied"));
-
 
             } else {
                 toast(this,"Please enter username and password");
