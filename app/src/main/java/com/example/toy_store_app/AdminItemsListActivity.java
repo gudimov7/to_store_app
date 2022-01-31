@@ -1,12 +1,16 @@
 package com.example.toy_store_app;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
@@ -15,18 +19,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.example.toy_store_app.adapters.StoreItemAdminDashAdapter;
 import com.example.toy_store_app.firebase.FirebaseDB;
-import com.example.toy_store_app.firebase.FirebaseST;
-import com.example.toy_store_app.services.FF;
 import com.example.toy_store_app.services.ItemDescription;
 import com.example.toy_store_app.services.StoreItem;
 import static com.example.toy_store_app.services.FF.*;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AdminItemsListActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
@@ -34,6 +38,9 @@ public class AdminItemsListActivity extends AppCompatActivity {
     private Button addBtn;
     private ArrayList<StoreItem> storeItems;
     private Dialog dialog;
+    private ImageButton itemPicIV;
+    private Bitmap bmpImg;
+    private String imgPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +54,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
         addBtn.setOnClickListener(v -> {
             dialog = new Dialog(AdminItemsListActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_add_new);
-            ImageButton itemPicIV = (ImageButton) dialog.findViewById(R.id.adminStoreItem_dialog_iv_itemPic);
+            itemPicIV = (ImageButton) dialog.findViewById(R.id.adminStoreItem_dialog_iv_itemPic);
             EditText itemNameET = (EditText) dialog.findViewById(R.id.adminStoreItem_dialog_et_itemName);
             EditText itemAgeET = (EditText) dialog.findViewById(R.id.adminStoreItem_dialog_et_itemAge);
             EditText itemColorET = (EditText) dialog.findViewById(R.id.adminStoreItem_dialog_et_itemColor);
@@ -61,15 +68,17 @@ public class AdminItemsListActivity extends AppCompatActivity {
                 if (!isEditTextEmpty(itemNameET)) {
                     Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     getIntent.setType("image/*");
-                    Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                    Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     pickIntent.setType("image/*");
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    takePictureIntent.setType("image/*");
+
+                    Intent camIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                     Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {takePictureIntent});
 
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent,camIntent});
+
+                    startActivityForResult(chooserIntent, PICK_IMAGE);
                 }
             });
             clearBtn.setOnClickListener(cv -> {
@@ -82,6 +91,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
             });
             addBtn.setOnClickListener(av -> {
                 if (
+                        bmpImg != null &&
                         !isEditTextEmpty(itemNameET) &&
                         !isEditTextEmpty(itemAgeET) &&
                         !isEditTextEmpty(itemColorET) &&
@@ -106,8 +116,9 @@ public class AdminItemsListActivity extends AppCompatActivity {
                                     itemMade
                             ),
                             itemPrice,
-                            itemPicIV.getId()+""
+                            imgPath
                     );
+
                     storeItems.add(item);
                     FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).child(itemName).setValue(item);
                     log(AdminItemsListActivity.class,"add item successfully");
@@ -127,6 +138,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
 
     }
 
+
     void refreshLV() {
         StoreItemAdminDashAdapter SIADA = new StoreItemAdminDashAdapter(this,R.layout.layout_store_item_admin_dash,storeItems);
         itemsLV.setAdapter(SIADA);
@@ -135,11 +147,27 @@ public class AdminItemsListActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            toast(this,imageBitmap.toString());
-//            FirebaseST.getStorageRef().child(FirebaseDB.TOYS_CHILD).putFile(data.getData());
+            Uri imgURI = null;
+            if (data.hasExtra("data")) {
+                bmpImg = (Bitmap) data.getExtras().get("data");
+                imgPath = MediaStore.Images.Media.insertImage(getContentResolver(), bmpImg , Calendar.getInstance().getTime().toString()," ");
+            } else {
+                imgURI = data.getData();
+                imgPath = imgURI.getPath();
+                try {
+                    bmpImg = MediaStore.Images.Media.getBitmap(getContentResolver(), imgURI);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            itemPicIV.setImageBitmap(bmpImg);
+
+
         }
     }
+
+
+
 
 }
