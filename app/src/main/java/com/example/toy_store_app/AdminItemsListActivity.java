@@ -1,6 +1,7 @@
 package com.example.toy_store_app;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.EventLogTags;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
@@ -24,10 +26,24 @@ import android.widget.Toast;
 
 import com.example.toy_store_app.adapters.StoreItemAdminDashAdapter;
 import com.example.toy_store_app.firebase.FirebaseDB;
+import com.example.toy_store_app.firebase.FirebaseST;
 import com.example.toy_store_app.services.ItemDescription;
 import com.example.toy_store_app.services.StoreItem;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.SuccessContinuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
 import static com.example.toy_store_app.services.FF.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -107,24 +123,55 @@ public class AdminItemsListActivity extends AppCompatActivity {
                     String itemMade = itemMadeET.getText().toString();
                     float itemPrice = Float.parseFloat(itemPriceET.getText().toString());
 
-                    StoreItem item = new StoreItem(
-                            itemName,
-                            new ItemDescription(
-                                    itemAge,
-                                    itemColor,
-                                    itemMaterial,
-                                    itemMade
-                            ),
-                            itemPrice,
-                            imgPath
-                    );
+                    File file = bitmapToFile(this,bmpImg,itemName +".jpeg");
+                    Uri fileURI = Uri.fromFile(file);
 
-                    storeItems.add(item);
-                    FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).child(itemName).setValue(item);
-                    log(AdminItemsListActivity.class,"add item successfully");
-                    logToFireBase(this,"add item successfully");
-                    toast(this,"add item successfully");
-                    refreshLV();
+                    FirebaseST.
+                            getStorageRef().
+                            child(FirebaseST.
+                            TOYS_FOLDER).
+                            child(itemName).
+                            putFile(fileURI).
+                            addOnFailureListener(e -> {
+                                toast(this,"Upload file to storage failed");
+                                log(AdminItemsListActivity.class,"Upload file to storage failed" + e.getMessage());
+                                logToFireBase(this,"Upload file to storage failed" + e.getMessage());
+                            }).addOnSuccessListener(taskSnapshot -> {
+                                toast(this,"Upload file to storage successful");
+                                log(AdminItemsListActivity.class,"Upload file to storage successful");
+                                logToFireBase(this,"Upload file to storage successful");
+                     }).continueWithTask(task -> {
+                         if (!task.isSuccessful()) {
+                             throw task.getException();
+                         }
+                         StorageReference ref = FirebaseST.getStorageRef().child(FirebaseST.TOYS_FOLDER).child(itemName);
+                         return ref.getDownloadUrl();
+                     }).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            imgPath = downloadUri.getPath();
+                            StoreItem item = new StoreItem(
+                                    itemName,
+                                    new ItemDescription(
+                                            itemAge,
+                                            itemColor,
+                                            itemMaterial,
+                                            itemMade
+                                    ),
+                                    itemPrice,
+                                    imgPath
+                            );
+                            storeItems.add(item);
+                            FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).child(itemName).setValue(item);
+                            log(AdminItemsListActivity.class,"add item successfully");
+                            logToFireBase(this,"add item successfully");
+                            toast(this,"add item successfully");
+                            refreshLV();
+                        } else {
+                            toast(AdminItemsListActivity.this,"something went wrong");
+                        }
+                    });
+
                     dialog.dismiss();
                 }
             });
@@ -134,14 +181,43 @@ public class AdminItemsListActivity extends AppCompatActivity {
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+
         });
+        refreshLV();
 
     }
 
 
     void refreshLV() {
-        StoreItemAdminDashAdapter SIADA = new StoreItemAdminDashAdapter(this,R.layout.layout_store_item_admin_dash,storeItems);
-        itemsLV.setAdapter(SIADA);
+        FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data: snapshot.getChildren()) {
+                    StoreItem item = new StoreItem();
+                    for (DataSnapshot items: data.getChildren()) {
+                        item.setDescription(data.child(StoreItem.ITEM_DESCRIPTION).getValue(ItemDescription.class));
+                        item.setItemName(data.child(StoreItem.ITEM_NAME).getValue(String.class));
+                        item.setPic(data.child(StoreItem.ITEM_PIC).getValue(String.class));
+                        item.setPrice(data.child(StoreItem.ITEM_PRICE).getValue(Float.class));
+                    }
+                    storeItems.add(item);
+
+                }
+                StoreItemAdminDashAdapter SIADA = new StoreItemAdminDashAdapter(AdminItemsListActivity.this,R.layout.layout_store_item_admin_dash,storeItems);
+                itemsLV.setAdapter(SIADA);
+                toast(AdminItemsListActivity.this,"fetched item list successfully");
+                log(AdminItemsListActivity.class,"fetched item list successfully");
+                logToFireBase(AdminItemsListActivity.this,"fetched item list successfully");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                toast(AdminItemsListActivity.this,"refresh list got wrong");
+                log(AdminItemsListActivity.class,"refresh list got wrong");
+                logToFireBase(AdminItemsListActivity.this,"refresh list got wrong");
+            }
+        });
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -166,8 +242,6 @@ public class AdminItemsListActivity extends AppCompatActivity {
 
         }
     }
-
-
 
 
 }

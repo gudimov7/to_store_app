@@ -1,6 +1,14 @@
 package com.example.toy_store_app.services;
 
 public class StoreItem {
+    public static final String ITEM_NAME = "itemName";
+    public static final String ITEM_DESCRIPTION = "description";
+    public static final String ITEM_DESCRIPTION_AGE = "age";
+    public static final String ITEM_DESCRIPTION_COLOR = "color";
+    public static final String ITEM_DESCRIPTION_MADE = "made";
+    public static final String ITEM_DESCRIPTION_MATERIAL = "material";
+    public static final String ITEM_PIC = "pic";
+    public static final String ITEM_PRICE = "price";
     private String itemName, pic;
     private ItemDescription description;
     private float price;

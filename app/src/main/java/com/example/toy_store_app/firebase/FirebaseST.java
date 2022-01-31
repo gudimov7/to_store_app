@@ -5,6 +5,7 @@ import com.google.firebase.storage.StorageReference;
 
 public class FirebaseST {
     public static final String FIREBASE_STORAGE = "gs://toystoreapp-edbfc.appspot.com/";
+    public static final String TOYS_FOLDER = "store_items";
 
 
     private static FirebaseStorage storage;
