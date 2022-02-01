@@ -131,47 +131,43 @@ public class AdminItemsListActivity extends AppCompatActivity {
                             child(FirebaseST.
                             TOYS_FOLDER).
                             child(itemName).
-                            putFile(fileURI).
-                            addOnFailureListener(e -> {
-                                toast(this,"Upload file to storage failed");
-                                log(AdminItemsListActivity.class,"Upload file to storage failed" + e.getMessage());
-                                logToFireBase(this,"Upload file to storage failed" + e.getMessage());
-                            }).addOnSuccessListener(taskSnapshot -> {
-                                toast(this,"Upload file to storage successful");
-                                log(AdminItemsListActivity.class,"Upload file to storage successful");
-                                logToFireBase(this,"Upload file to storage successful");
-                     }).continueWithTask(task -> {
-                         if (!task.isSuccessful()) {
-                             throw task.getException();
-                         }
-                         StorageReference ref = FirebaseST.getStorageRef().child(FirebaseST.TOYS_FOLDER).child(itemName);
-                         return ref.getDownloadUrl();
-                     }).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Uri downloadUri = task.getResult();
-                            imgPath = downloadUri.getPath();
-                            StoreItem item = new StoreItem(
-                                    itemName,
-                                    new ItemDescription(
-                                            itemAge,
-                                            itemColor,
-                                            itemMaterial,
-                                            itemMade
-                                    ),
-                                    itemPrice,
-                                    imgPath
-                            );
-                            storeItems.add(item);
-                            FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).child(itemName).setValue(item);
-                            log(AdminItemsListActivity.class,"add item successfully");
-                            logToFireBase(this,"add item successfully");
-                            toast(this,"add item successfully");
-                            refreshLV();
-                        } else {
-                            toast(AdminItemsListActivity.this,"something went wrong");
+                            putFile(fileURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            toast(AdminItemsListActivity.this,"Upload file to storage successful");
+                            log(AdminItemsListActivity.class,"Upload file to storage successful");
+                            logToFireBase(AdminItemsListActivity.this,"Upload file to storage successful");
+
+                            Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
+
+                            downloadUri.addOnSuccessListener(uri -> {
+                                imgPath = downloadUri.getResult().toString();
+                                StoreItem item = new StoreItem(
+                                        itemName,
+                                        new ItemDescription(
+                                                itemAge,
+                                                itemColor,
+                                                itemMaterial,
+                                                itemMade
+                                        ),
+                                        itemPrice,
+                                        imgPath
+                                );
+                                storeItems.add(item);
+                                FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).child(itemName).setValue(item);
+                                log(AdminItemsListActivity.class,"add item successfully");
+                                logToFireBase(AdminItemsListActivity.this,"add item successfully");
+                                toast(AdminItemsListActivity.this,"add item successfully");
+                                refreshLV();
+                            });
+                        }}).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            toast(AdminItemsListActivity.this,"Upload file to storage failed");
+                            log(AdminItemsListActivity.class,"Upload file to storage failed" + e.getMessage());
+                            logToFireBase(AdminItemsListActivity.this,"Upload file to storage failed" + e.getMessage());
                         }
                     });
-
                     dialog.dismiss();
                 }
             });
@@ -189,6 +185,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
 
 
     void refreshLV() {
+        storeItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
