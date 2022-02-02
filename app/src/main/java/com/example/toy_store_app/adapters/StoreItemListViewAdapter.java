@@ -17,12 +17,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class StoreItemAdminDashAdapter extends ArrayAdapter<StoreItem> {
+public class StoreItemListViewAdapter extends ArrayAdapter<StoreItem> {
     private ArrayList<StoreItem> storeItems;
     private Context context;
     private int resource;
 
-    public StoreItemAdminDashAdapter(@NonNull Context context, int resource, @NonNull ArrayList<StoreItem> storeItems) {
+    public StoreItemListViewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<StoreItem> storeItems) {
         super(context, resource, storeItems);
         this.context = context;
         this.storeItems = storeItems;

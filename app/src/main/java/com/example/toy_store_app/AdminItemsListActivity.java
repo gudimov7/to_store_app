@@ -1,44 +1,33 @@
 package com.example.toy_store_app;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.EventLogTags;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.Toast;
 
 
-import com.example.toy_store_app.adapters.StoreItemAdminDashAdapter;
+import com.example.toy_store_app.adapters.StoreItemListViewAdapter;
 import com.example.toy_store_app.firebase.FirebaseDB;
 import com.example.toy_store_app.firebase.FirebaseST;
 import com.example.toy_store_app.services.ItemDescription;
 import com.example.toy_store_app.services.StoreItem;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import static com.example.toy_store_app.services.FF.*;
@@ -180,10 +169,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
 
         });
         refreshLV();
-
     }
-
-
     void refreshLV() {
         storeItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -200,7 +186,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
                     storeItems.add(item);
 
                 }
-                StoreItemAdminDashAdapter SIADA = new StoreItemAdminDashAdapter(AdminItemsListActivity.this,R.layout.layout_store_item_admin_dash,storeItems);
+                StoreItemListViewAdapter SIADA = new StoreItemListViewAdapter(AdminItemsListActivity.this,R.layout.layout_store_item_list_row,storeItems);
                 itemsLV.setAdapter(SIADA);
                 toast(AdminItemsListActivity.this,"fetched item list successfully");
                 log(AdminItemsListActivity.class,"fetched item list successfully");
@@ -233,10 +219,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             itemPicIV.setImageBitmap(bmpImg);
-
-
         }
     }
 

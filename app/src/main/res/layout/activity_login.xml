@@ -79,6 +79,5 @@
         android:id="@+id/loginActivity_cb_admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="true"
         android:text="log in as admin" />
 </LinearLayout>
