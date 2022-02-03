@@ -7,19 +7,81 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="15dp"
+    android:weightSum="10"
     tools:context=".InStoreActivity">
 
+    <!-- store header -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="4.5"
         android:textAlignment="center"
+        android:gravity="center"
         android:textSize="18sp"
         android:textStyle="bold"
         android:text="Toy Store App"/>
+    <!-- items listview-->
     <ListView
         android:id="@+id/inStoreActivity_lv_itemsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <!-- Bottom navigation menu -->
+    <LinearLayout
+        android:layout_width="@dimen/browser_actions_context_menu_max_width"
+        android:layout_height="match_parent"
+        android:layout_margin="-15dp"
+        android:layout_weight="4.5"
+        android:orientation="horizontal">
+
+        <Spinner
+            android:id="@+id/inStoreActivity_sp_sortSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="sort by button"
+            android:contextClickable="true"
+            android:prompt="@string/sort_title"
+            android:saveEnabled="false"
+            android:textAlignment="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.nex3z.notificationbadge.NotificationBadge
+                android:id="@+id/inStoreActivity_nb_cartBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-25dp"
+                android:textSize="14sp"
+                android:translationZ="1dp" />
+
+            <ImageButton
+                android:id="@+id/inStoreActivity_ib_cartBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:contentDescription="cart button"
+                android:minWidth="48dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_baseline_shopping_cart_24" />
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/inStoreActivity_ib_userInfoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clickable="true"
+            android:contentDescription="User info"
+            android:minHeight="48dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_person_24"/>
+    </LinearLayout>
 
 
 </LinearLayout>

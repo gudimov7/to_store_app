@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Toy_Store_app</string>
+    <string name="sort_title">Sort BY</string>
+
+    <string-array name="sort_by">
+        <item>Sort by </item>
+        <item>Name \u2191</item>
+        <item>Name \u2193</item>
+        <item>Price \u2191</item>
+        <item>Price \u2193</item>
+
+    </string-array>
+
 </resources>

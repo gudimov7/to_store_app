@@ -8,14 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.toy_store_app.adapters.StoreItemListViewAdapter;
@@ -25,14 +29,20 @@ import com.example.toy_store_app.services.StoreItem;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.nex3z.notificationbadge.NotificationBadge;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class InStoreActivity extends AppCompatActivity {
 
     private ListView itemsList;
     private ArrayList<StoreItem> inStoreItems;
+    private Spinner sortSpinner;
+    private ImageButton userInfoBtn;
+    private ImageButton cartBtn;
+    private NotificationBadge cartBadge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +50,13 @@ public class InStoreActivity extends AppCompatActivity {
         setContentView(R.layout.activity_in_store);
 
         itemsList = (ListView) findViewById(R.id.inStoreActivity_lv_itemsList);
+        sortSpinner = (Spinner) findViewById(R.id.inStoreActivity_sp_sortSpinner);
+        userInfoBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_userInfoBtn);
+        cartBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_cartBtn);
+        cartBadge = (NotificationBadge) findViewById(R.id.inStoreActivity_nb_cartBadge);
         inStoreItems = new ArrayList<>();
 
         refreshList();
-
-
         itemsList.setOnItemClickListener(((parent, view, position, id) -> {
             Dialog dialog = new Dialog(InStoreActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_full_view);
@@ -80,6 +92,45 @@ public class InStoreActivity extends AppCompatActivity {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         }));
 
+        cartBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, UserCartActivity.class)));
+        userInfoBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, RegisterActivity.class)));
+
+        sortSpinner.setPrompt("Sort by");
+        sortBy();
+        sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortSpinner.getChildAt(0).setClickable(false);
+                switch (position) {
+                    case 1:
+                        Collections.sort(inStoreItems, (o1, o2) ->{
+                            return o1.getItemName().compareTo(o2.getItemName());
+                        });
+                        break;
+                    case 2:
+                        Collections.sort(inStoreItems, (o1, o2) -> {
+                            return o2.getItemName().compareTo(o1.getItemName());
+                        });
+                        break;
+                    case 3:
+                        Collections.sort(inStoreItems, (o1, o2) -> {
+                            return (int)( o1.getPrice() - o2.getPrice());
+                        });
+                        break;
+                    case 4:
+                        Collections.sort(inStoreItems, (o1, o2) -> {
+                            return (int)( o2.getPrice() - o1.getPrice());
+                        });
+                        break;
+                }
+                refreshList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
 
@@ -112,5 +163,12 @@ public class InStoreActivity extends AppCompatActivity {
         });
 
 
+    }
+    private void updateBadge() {
+        cartBadge.setNumber(1);
+    }
+    private void sortBy() {
+        ArrayAdapter<CharSequence> sortByAdp = ArrayAdapter.createFromResource(this, R.array.sort_by, R.layout.textview_spinner_single_row);
+        sortSpinner.setAdapter(sortByAdp);
     }
 }
