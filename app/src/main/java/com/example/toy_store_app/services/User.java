@@ -1,16 +1,13 @@
 package com.example.toy_store_app.services;
 
-
-import java.util.ArrayList;
-
 public class User {
     private String id, name, phone;
     private Address address;
-    private ArrayList <StoreItem> cart;
     private boolean isAdmin;
+    private Order order;
 
     public User() {
-        cart = new ArrayList<StoreItem>();
+        order = new Order();
     }
 
     public User(String id, String name, String phone, Address address) {
@@ -55,20 +52,20 @@ public class User {
         this.address = address;
     }
 
-    public ArrayList<StoreItem> getCart() {
-        return cart;
-    }
-
-    public void setCart(ArrayList<StoreItem> cart) {
-        this.cart = cart;
-    }
-
     public boolean isAdmin() {
         return isAdmin;
     }
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     @Override

@@ -39,14 +39,16 @@ public class InStoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_store);
 
-        itemsList = (ListView) findViewById(R.id.adminItemListActivity_lv_storeItemList);
+        itemsList = (ListView) findViewById(R.id.inStoreActivity_lv_itemsList);
         inStoreItems = new ArrayList<>();
 
         refreshList();
 
+
         itemsList.setOnItemClickListener(((parent, view, position, id) -> {
             Dialog dialog = new Dialog(InStoreActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_full_view);
+
             TextView itemNameHeader = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemNameHeader);
             TextView itemName = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemName);
             TextView itemAge = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemAge);
@@ -55,16 +57,16 @@ public class InStoreActivity extends AppCompatActivity {
             TextView itemMade = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemMade);
             TextView itemPrice = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemPrice);
             ImageView itemPic = dialog.findViewById(R.id.fullStoreIte_dialog_iv_itemPic);
-            Button backBtn = findViewById(R.id.fullStoreItem_dialog_btn_back);
-            Button buyBtn = findViewById(R.id.fullStoreItem_dialog_btn_back);
+            Button backBtn = dialog.findViewById(R.id.fullStoreItem_dialog_btn_back);
+            Button buyBtn = dialog.findViewById(R.id.fullStoreItem_dialog_btn_buy);
 
             itemNameHeader.setText(inStoreItems.get(position).getItemName());
-            itemName.setText(inStoreItems.get(position).getItemName());
-            itemAge.setText(inStoreItems.get(position).getItemName());
-            itemColor.setText(inStoreItems.get(position).getItemName());
-            itemMaterial.setText(inStoreItems.get(position).getItemName());
-            itemMade.setText(inStoreItems.get(position).getItemName());
-            itemPrice.setText(inStoreItems.get(position).getItemName());
+            itemName.setText("Name:\t" + inStoreItems.get(position).getItemName());
+            itemAge.setText("Age:\t" + inStoreItems.get(position).getDescription().getAge() + "+");
+            itemColor.setText("Color:\t" + inStoreItems.get(position).getDescription().getColor());
+            itemMaterial.setText("Material:\t" + inStoreItems.get(position).getDescription().getMaterial());
+            itemMade.setText("Made in:\t" + inStoreItems.get(position).getDescription().getMade());
+            itemPrice.setText(String.format("Price:\t%.2f$", inStoreItems.get(position).getPrice()));
             Picasso.get().load(inStoreItems.get(position).getPic()).resize(70,70).into(itemPic);
 
             backBtn.setOnClickListener(v -> dialog.dismiss());
@@ -77,6 +79,7 @@ public class InStoreActivity extends AppCompatActivity {
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         }));
+
 
     }
 
