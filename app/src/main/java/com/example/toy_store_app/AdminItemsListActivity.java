@@ -51,6 +51,8 @@ public class AdminItemsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_items_list);
+        getSupportActionBar().hide();
+
         storeItems = new ArrayList<>();
 
         itemsLV = (ListView) findViewById(R.id.adminItemListActivity_lv_storeItemList);

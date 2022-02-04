@@ -2,7 +2,6 @@ package com.example.toy_store_app;
 
 import static com.example.toy_store_app.services.FF.log;
 import static com.example.toy_store_app.services.FF.logToFireBase;
-import static com.example.toy_store_app.services.FF.toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,8 +22,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.toy_store_app.adapters.StoreItemListViewAdapter;
+import com.example.toy_store_app.firebase.FirebaseAT;
 import com.example.toy_store_app.firebase.FirebaseDB;
 import com.example.toy_store_app.services.ItemDescription;
+import com.example.toy_store_app.services.Order;
 import com.example.toy_store_app.services.StoreItem;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +40,7 @@ public class InStoreActivity extends AppCompatActivity {
 
     private ListView itemsList;
     private ArrayList<StoreItem> inStoreItems;
+    private Order order;
     private Spinner sortSpinner;
     private ImageButton userInfoBtn;
     private ImageButton cartBtn;
@@ -48,6 +50,7 @@ public class InStoreActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_store);
+        getSupportActionBar().hide(); //hide title bar
 
         itemsList = (ListView) findViewById(R.id.inStoreActivity_lv_itemsList);
         sortSpinner = (Spinner) findViewById(R.id.inStoreActivity_sp_sortSpinner);
@@ -55,6 +58,7 @@ public class InStoreActivity extends AppCompatActivity {
         cartBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_cartBtn);
         cartBadge = (NotificationBadge) findViewById(R.id.inStoreActivity_nb_cartBadge);
         inStoreItems = new ArrayList<>();
+        order = new Order();
 
         refreshList();
         itemsList.setOnItemClickListener(((parent, view, position, id) -> {
@@ -83,7 +87,14 @@ public class InStoreActivity extends AppCompatActivity {
 
             backBtn.setOnClickListener(v -> dialog.dismiss());
             buyBtn.setOnClickListener(v-> {
-                //TODO: add item to cart
+                order.addItemToCart(inStoreItems.get(position));
+                FirebaseDB
+                        .getDataReference()
+                        .child(FirebaseDB.USERS_CHILD)
+                        .child(FirebaseAT.getAuth().getUid())
+                        .child(FirebaseDB.CART_CHILD)
+                        .setValue(order);
+                updateBadge();
                 dialog.dismiss();
             });
 
@@ -93,7 +104,11 @@ public class InStoreActivity extends AppCompatActivity {
         }));
 
         cartBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, UserCartActivity.class)));
-        userInfoBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, RegisterActivity.class)));
+        userInfoBtn.setOnClickListener(v -> {
+            Intent intent  = new Intent(InStoreActivity.this, RegisterActivity.class);
+            intent.putExtra("returnedUser", true);
+            startActivity(intent);
+        });
 
         sortSpinner.setPrompt("Sort by");
         sortBy();
@@ -123,7 +138,7 @@ public class InStoreActivity extends AppCompatActivity {
                         });
                         break;
                 }
-                refreshList();
+                getList();
             }
 
             @Override
@@ -134,6 +149,10 @@ public class InStoreActivity extends AppCompatActivity {
 
     }
 
+    private void getList() {
+        StoreItemListViewAdapter SIA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
+        itemsList.setAdapter(SIA);
+    }
     private void refreshList() {
         inStoreItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,10 +168,8 @@ public class InStoreActivity extends AppCompatActivity {
                     }
                     inStoreItems.add(item);
                 }
-                StoreItemListViewAdapter SIA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
-                itemsList.setAdapter(SIA);
+                getList();
                 log(InStoreActivity.class,"fetched item list successfully");
-                logToFireBase(InStoreActivity.this,"fetched item list successfully");
             }
 
             @Override
@@ -165,9 +182,10 @@ public class InStoreActivity extends AppCompatActivity {
 
     }
     private void updateBadge() {
-        cartBadge.setNumber(1);
+        cartBadge.setNumber(order.getCart().size());
     }
     private void sortBy() {
+        // sort ny spinner list view
         ArrayAdapter<CharSequence> sortByAdp = ArrayAdapter.createFromResource(this, R.array.sort_by, R.layout.textview_spinner_single_row);
         sortSpinner.setAdapter(sortByAdp);
     }

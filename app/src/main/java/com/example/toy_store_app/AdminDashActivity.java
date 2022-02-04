@@ -16,6 +16,7 @@ public class AdminDashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_dash);
+        getSupportActionBar().hide();
 
         viewItemsBtn = (Button) findViewById(R.id.adminDashActivity_btn_storeItemList);
         viewOrdersBtn = (Button) findViewById(R.id.adminDashActivity_btn_purchases);

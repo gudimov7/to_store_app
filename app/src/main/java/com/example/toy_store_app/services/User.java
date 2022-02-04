@@ -1,6 +1,13 @@
 package com.example.toy_store_app.services;
 
 public class User {
+    public static final String USER_ID = "id";
+    public static final String USER_NAME = "name";
+    public static final String USER_PHONE = "phone";
+    public static final String USER_ADDRESS = "address";
+    public static final String USER_IS_ADMIN = "admin";
+    public static final String USER_ORDER = "order";
+
     private String id, name, phone;
     private Address address;
     private boolean isAdmin;

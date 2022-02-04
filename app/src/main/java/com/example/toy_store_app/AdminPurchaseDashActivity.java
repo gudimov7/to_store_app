@@ -10,5 +10,6 @@ public class AdminPurchaseDashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_purchase_dash);
+        getSupportActionBar().hide();
     }
 }
