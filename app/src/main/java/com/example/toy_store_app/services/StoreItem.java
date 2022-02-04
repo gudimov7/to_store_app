@@ -57,7 +57,7 @@ public class StoreItem {
 
     @Override
     public String toString() {
-        return "StoreItem{" +
+        return "StoreItem{\n" +
                 "\tname:\t" + itemName + "\n" +
                 "\tdescription:\t" + description + "\n" +
                 "\tprice:\t" + price + "$\n" +

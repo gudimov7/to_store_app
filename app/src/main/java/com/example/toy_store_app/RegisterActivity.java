@@ -3,7 +3,6 @@ package com.example.toy_store_app;
 import static com.example.toy_store_app.services.FF.*;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,12 +17,10 @@ import com.example.toy_store_app.firebase.FirebaseDB;
 import com.example.toy_store_app.services.Address;
 import com.example.toy_store_app.services.Order;
 import com.example.toy_store_app.services.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -50,7 +47,6 @@ public class RegisterActivity extends AppCompatActivity {
     private Button clearBtn;
     private Button submitBtn;
 
-    private boolean returnedUser;
     private User user;
 
     @Override
@@ -60,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         Intent onStartIntent = getIntent();
-        returnedUser = onStartIntent.getBooleanExtra("returnedUser",false);
+        boolean returnedUser = onStartIntent.getBooleanExtra("returnedUser", false);
 
         headerTV = (TextView) findViewById(R.id.registrationActivity_tv_header);
 
@@ -213,12 +209,12 @@ public class RegisterActivity extends AppCompatActivity {
                     user = new User(fUser.getUid(), name, phone, new Address(street, city, country));
                     FirebaseDB.getDataReference().child(FirebaseDB.USERS_CHILD).child(fUser.getUid()).setValue(user);
                     toast(this,"User created successfully");
-                    log(LoginActivity.class,FirebaseAT.getAuth().getUid() + ": registered in successfully");
+                    log(RegisterActivity.class,FirebaseAT.getAuth().getUid() + ": registered in successfully");
                     logToFireBase(this,FirebaseAT.getAuth().getUid() + ": registered in successfully");
                     finish();
                 }).addOnFailureListener(authResult -> {
                     toast(this,"User create failed");
-                    log(LoginActivity.class,email + ": registered failed");
+                    log(RegisterActivity.class,email + ": registered failed");
                     logToFireBase(this,email + ": registered failed");
                 });
 
@@ -307,37 +303,21 @@ public class RegisterActivity extends AppCompatActivity {
                             .getAuth()
                             .getCurrentUser()
                             .updateEmail(email)
-                            .addOnSuccessListener(unused -> {
-                        toast(this,"email update successful");
-                        log(LoginActivity.class, FirebaseAT.getAuth().getUid() + ": email update successful");
-                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": email update successful");
-                    })
-                            .addOnFailureListener(e -> {
-                        toast(this,"update email failed");
-                        log(LoginActivity.class, FirebaseAT.getAuth().getUid() + ": update email failed");
-                        logToFireBase(this, FirebaseAT.getAuth().getUid() + ": update email failed");
-                    });
+                            .addOnCompleteListener(onChangeCredentialCompleteListener);
                 }
                 if (!password.contains("\u2022")) {
                     FirebaseAT
                             .getAuth()
                             .getCurrentUser()
                             .updatePassword(password)
-                            .addOnSuccessListener(unused -> {
-                        toast(this,"password update successful");
-                        log(LoginActivity.class, FirebaseAT.getAuth().getUid() + ": password update successful");
-                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": password update successful");
-                    })
-                            .addOnFailureListener(e -> {
-                        toast(this,"update password failed");
-                        log(LoginActivity.class, FirebaseAT.getAuth().getUid() + ": update password failed");
-                        logToFireBase(this, FirebaseAT.getAuth().getUid() + ": update password failed");
-                    });
+                            .addOnCompleteListener(onChangeCredentialCompleteListener);
                 }
+                viewCurrentUserActivity();
             } else {
                 toast(this, "please fill all fields");
             }
         });
+
     }
 
     private void updateChildren(String key, Object value) {
@@ -350,13 +330,25 @@ public class RegisterActivity extends AppCompatActivity {
                 .updateChildren(map, (error, ref) -> {
                     if (error == null) {
                         toast(this,key + ": update key successful");
-                        log(LoginActivity.class, key + ": update key successful");
-                        logToFireBase(this,key + ": update key successful");
+                        log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
+                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
                     } else {
                         toast(this,key + ": update key failed");
-                        log(LoginActivity.class, key + ": update key failed");
-                        logToFireBase(this,key + ": update key failed");
+                        log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
+                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
                     }
                 });
     }
+
+    private OnCompleteListener onChangeCredentialCompleteListener = (task) -> {
+        if (task.isSuccessful()) {
+            toast(this,"update credential successful");
+            log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": update credential successful");
+            logToFireBase(this,FirebaseAT.getAuth().getUid() + ": update credential successful");
+        } else {
+            toast(this,"update credential failed");
+            log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": update credential failed");
+            logToFireBase(this, FirebaseAT.getAuth().getUid() + ": update credential failed");
+        }
+    };
 }

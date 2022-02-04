@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
     tools:context=".UserCartActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- cart header-->
+    <TextView
+        android:id="@+id/userCartActivity_tv_cartHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- cart order list-->
+    <ListView
+        android:id="@+id/userCartActivity_lv_orderList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    </ListView>
+
+    <!-- total price view-->
+    <TextView
+        android:id="@+id/userCartActivity_tv_totalPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
+        android:text="Total Price:..." />
+
+    <!-- back to shopping btn-->
+    <Button
+        android:id="@+id/userCartActivity_btn_continueShopping"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Continue Shopping" />
+
+    <!-- purchase btn-->
+    <Button
+        android:id="@+id/userCartActivity_btn_purchase"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Purchase" />
+
+</LinearLayout>

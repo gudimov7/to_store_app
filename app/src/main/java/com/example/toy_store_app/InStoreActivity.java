@@ -2,6 +2,7 @@ package com.example.toy_store_app;
 
 import static com.example.toy_store_app.services.FF.log;
 import static com.example.toy_store_app.services.FF.logToFireBase;
+import static com.example.toy_store_app.services.FF.toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ import com.example.toy_store_app.firebase.FirebaseDB;
 import com.example.toy_store_app.services.ItemDescription;
 import com.example.toy_store_app.services.Order;
 import com.example.toy_store_app.services.StoreItem;
+import com.example.toy_store_app.services.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -40,7 +42,7 @@ public class InStoreActivity extends AppCompatActivity {
 
     private ListView itemsList;
     private ArrayList<StoreItem> inStoreItems;
-    private Order order;
+    private User user;
     private Spinner sortSpinner;
     private ImageButton userInfoBtn;
     private ImageButton cartBtn;
@@ -51,6 +53,8 @@ public class InStoreActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_store);
         getSupportActionBar().hide(); //hide title bar
+        user = new User();
+        getUser();
 
         itemsList = (ListView) findViewById(R.id.inStoreActivity_lv_itemsList);
         sortSpinner = (Spinner) findViewById(R.id.inStoreActivity_sp_sortSpinner);
@@ -58,7 +62,6 @@ public class InStoreActivity extends AppCompatActivity {
         cartBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_cartBtn);
         cartBadge = (NotificationBadge) findViewById(R.id.inStoreActivity_nb_cartBadge);
         inStoreItems = new ArrayList<>();
-        order = new Order();
 
         refreshList();
         itemsList.setOnItemClickListener(((parent, view, position, id) -> {
@@ -87,13 +90,13 @@ public class InStoreActivity extends AppCompatActivity {
 
             backBtn.setOnClickListener(v -> dialog.dismiss());
             buyBtn.setOnClickListener(v-> {
-                order.addItemToCart(inStoreItems.get(position));
+                user.getOrder().addItemToCart(inStoreItems.get(position));
                 FirebaseDB
                         .getDataReference()
                         .child(FirebaseDB.USERS_CHILD)
                         .child(FirebaseAT.getAuth().getUid())
                         .child(FirebaseDB.CART_CHILD)
-                        .setValue(order);
+                        .setValue(user.getOrder());
                 updateBadge();
                 dialog.dismiss();
             });
@@ -153,6 +156,25 @@ public class InStoreActivity extends AppCompatActivity {
         StoreItemListViewAdapter SIA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
         itemsList.setAdapter(SIA);
     }
+    private void getUser() {
+        FirebaseDB.getDataReference().child(FirebaseDB.USERS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data: snapshot.getChildren()) {
+                    if(data.getKey().equals(FirebaseAT.getAuth().getUid())) {
+                        user = data.getValue(User.class);
+                        updateBadge();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                log(InStoreActivity.class,"fetched user canceled");
+                logToFireBase(InStoreActivity.this,"fetched user canceled");
+            }
+        });
+    }
     private void refreshList() {
         inStoreItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -178,11 +200,9 @@ public class InStoreActivity extends AppCompatActivity {
                 logToFireBase(InStoreActivity.this,"refresh canceled");
             }
         });
-
-
     }
     private void updateBadge() {
-        cartBadge.setNumber(order.getCart().size());
+        cartBadge.setNumber(user.getOrder().getCart().size());
     }
     private void sortBy() {
         // sort ny spinner list view

@@ -14,6 +14,7 @@ public class Order {
 
     public Order() {
         cart = new ArrayList<>();
+        setTotalPrice();
     }
 
     public ArrayList<StoreItem> getCart() {
@@ -22,6 +23,7 @@ public class Order {
 
     public void setCart(ArrayList<StoreItem> cart) {
         this.cart = cart;
+        setTotalPrice();
     }
 
     public float getTotalPrice() {
@@ -31,7 +33,7 @@ public class Order {
     private boolean setTotalPrice(){
         if (cart != null) {
             for (StoreItem item: cart)
-                totalPrice += item.getPrice();
+                this.totalPrice += item.getPrice();
             return true;
         }
         return false;
@@ -42,11 +44,13 @@ public class Order {
             cart = new ArrayList<>();
         }
         cart.add(item);
+        setTotalPrice();
     }
 
     public boolean removeItemFromCart(StoreItem item) {
         if (cart != null && cart.contains(item)) {
             cart.remove(item);
+            setTotalPrice();
             return true;
         }
         return false;

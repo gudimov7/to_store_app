@@ -77,6 +77,6 @@ public class User {
 
     @Override
     public String toString() {
-        return this.name + "\t:\n" + this.address;
+        return this.name + "\t:\n" + this.address +"\nPhone:\t" + this.phone;
     }
 }
