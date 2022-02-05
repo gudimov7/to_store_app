@@ -162,6 +162,7 @@ public class InStoreActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data: snapshot.getChildren()) {
                     if(data.getKey().equals(FirebaseAT.getAuth().getUid())) {
+                        toast(InStoreActivity.this, data.getKey());
                         user = data.getValue(User.class);
                         updateBadge();
                     }
@@ -214,7 +215,15 @@ public class InStoreActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         getUser();
-        updateBadge();
         getList();
+        updateBadge();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        getUser();
+        getList();
+        updateBadge();
     }
 }

@@ -3,9 +3,11 @@ package com.example.toy_store_app.services;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.text.method.HideReturnsTransformationMethod;
@@ -18,12 +20,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.example.toy_store_app.RegisterActivity;
+import com.example.toy_store_app.UserCartActivity;
+import com.example.toy_store_app.firebase.FirebaseAT;
 import com.example.toy_store_app.firebase.FirebaseDB;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public abstract class FF {
     public static final String ADMIN_PASS = "123456";
@@ -91,6 +100,34 @@ public abstract class FF {
             return file; // it will return null
         }
     }
+    public static void updateUserChildren(Context context, String key, Object value) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        FirebaseDB
+                .getDataReference()
+                .child(FirebaseDB.USERS_CHILD)
+                .child(FirebaseAT.getAuth().getUid())
+                .updateChildren(map, (error, ref) -> {
+                    if (error == null) {
+                        toast(context,key + ": update key successful");
+                        log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
+                        logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
+                    } else {
+                        toast(context,key + ": update key failed");
+                        log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
+                        logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
+                    }
+                });
+    }
+    public static void composeEmail(Context context, String[] addresses, String text) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, " Purchase");
+        intent.putExtra(Intent.EXTRA_TEXT,text);
+        intent.setData(Uri.parse("mailto:"));
 
-
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(intent);
+        } else Toast.makeText(context, "No suitable app for this action", Toast.LENGTH_SHORT).show();
+    }
 }

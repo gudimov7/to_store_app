@@ -1,15 +1,12 @@
 package com.example.toy_store_app;
 
-import static com.example.toy_store_app.services.FF.log;
-import static com.example.toy_store_app.services.FF.logToFireBase;
-import static com.example.toy_store_app.services.FF.toast;
+import static com.example.toy_store_app.services.FF.*;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -17,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.toy_store_app.adapters.StoreItemListViewAdapter;
 import com.example.toy_store_app.firebase.FirebaseAT;
@@ -78,16 +74,8 @@ public class UserCartActivity extends AppCompatActivity {
                         .child(user.getId())
                         .push()
                         .setValue(completedOrder);
-                for (int i = 0; i < user.getOrder().getCart().size(); i ++) {
-                    FirebaseDB
-                            .getDataReference()
-                            .child(FirebaseDB.USERS_CHILD)
-                            .child(user.getId())
-                            .child(User.USER_ORDER)
-                            .child(User.USER_CART)
-                            .child(String.valueOf(i))
-                            .removeValue();
-                }
+                user.getOrder().getCart().clear();
+                updateUserChildren(this,User.USER_ORDER,user.getOrder());
 
 
                 //send email to buyer
@@ -97,7 +85,10 @@ public class UserCartActivity extends AppCompatActivity {
                     mailText = mailText.concat( item.toString() + "\n");
                 mailText = mailText.concat(String.format("Total price %.2f $\n", user.getOrder().getTotalPrice()));
                 mailText = mailText.concat("\nCostumer:\n" + user.toString());
-                composeEmail(new String[]{"gudimov7@gmail.com"}, mailText);
+                composeEmail(this,new String[]{"gudimov7@gmail.com"}, mailText);
+
+                log(UserCartActivity.class,FirebaseAT.getAuth().getUid() + " : Order completed");
+                logToFireBase(this,FirebaseAT.getAuth().getUid() + " : Order completed");
 
                 finish();
             }
@@ -171,15 +162,5 @@ public class UserCartActivity extends AppCompatActivity {
         });
     }
 
-    private void composeEmail(String[] addresses, String text) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, " Purchase");
-        intent.putExtra(Intent.EXTRA_TEXT,text);
-        intent.setData(Uri.parse("mailto:"));
 
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        } else Toast.makeText(this, "No suitable app for this action", Toast.LENGTH_SHORT).show();
-    }
 }

@@ -23,8 +23,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-
 public class RegisterActivity extends AppCompatActivity {
     private TextView headerTV;
 
@@ -290,13 +288,13 @@ public class RegisterActivity extends AppCompatActivity {
                         !country.equals(user.getAddress().getCountry())
                 ) {
                     Address updatedAddress = new Address(street, city, country);
-                    updateChildren(User.USER_ADDRESS, updatedAddress);
+                    updateUserChildren(this, User.USER_ADDRESS, updatedAddress);
                 }
                 if (!name.equals(user.getName())) {
-                    updateChildren(User.USER_NAME, name);
+                    updateUserChildren(this, User.USER_NAME, name);
                 }
                 if (!phone.equals(user.getPhone())) {
-                    updateChildren(User.USER_PHONE, phone);
+                    updateUserChildren(this,User.USER_PHONE, phone);
                 }
                 if (!email.equals(FirebaseAT.getAuth().getCurrentUser().getEmail())) {
                     FirebaseAT
@@ -318,26 +316,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void updateChildren(String key, Object value) {
-        HashMap <String, Object> map = new HashMap<>();
-        map.put(key, value);
-        FirebaseDB
-                .getDataReference()
-                .child(FirebaseDB.USERS_CHILD)
-                .child(FirebaseAT.getAuth().getUid())
-                .updateChildren(map, (error, ref) -> {
-                    if (error == null) {
-                        toast(this,key + ": update key successful");
-                        log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
-                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
-                    } else {
-                        toast(this,key + ": update key failed");
-                        log(RegisterActivity.class, FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
-                        logToFireBase(this,FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
-                    }
-                });
     }
 
     private OnCompleteListener onChangeCredentialCompleteListener = (task) -> {
