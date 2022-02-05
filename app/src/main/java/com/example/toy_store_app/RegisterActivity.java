@@ -124,7 +124,6 @@ public class RegisterActivity extends AppCompatActivity {
                         user.setId(FirebaseAT.getAuth().getUid());
                         user.setName(snapshot.child(User.USER_NAME).getValue(String.class));
                         user.setPhone(snapshot.child(User.USER_PHONE).getValue(String.class));
-                        user.setAdmin(snapshot.child(User.USER_IS_ADMIN).getValue(Boolean.class));
                         user.setAddress(snapshot.child(User.USER_ADDRESS).getValue(Address.class));
                         user.setOrder(snapshot.child(User.USER_ORDER).getValue(Order.class));
 
@@ -135,7 +134,6 @@ public class RegisterActivity extends AppCompatActivity {
                         streetTV.setText(user.getAddress().getStreet());
                         cityTV.setText(user.getAddress().getCity());
                         countryTV.setText(user.getAddress().getCountry());
-
                     }
 
                     @Override

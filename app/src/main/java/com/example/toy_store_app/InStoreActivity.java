@@ -2,7 +2,6 @@ package com.example.toy_store_app;
 
 import static com.example.toy_store_app.services.FF.log;
 import static com.example.toy_store_app.services.FF.logToFireBase;
-import static com.example.toy_store_app.services.FF.toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +25,6 @@ import com.example.toy_store_app.adapters.StoreItemListViewAdapter;
 import com.example.toy_store_app.firebase.FirebaseAT;
 import com.example.toy_store_app.firebase.FirebaseDB;
 import com.example.toy_store_app.services.ItemDescription;
-import com.example.toy_store_app.services.Order;
 import com.example.toy_store_app.services.StoreItem;
 import com.example.toy_store_app.services.User;
 import com.google.firebase.database.DataSnapshot;
@@ -109,7 +107,11 @@ public class InStoreActivity extends AppCompatActivity {
         cartBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, UserCartActivity.class)));
         userInfoBtn.setOnClickListener(v -> {
             Intent intent  = new Intent(InStoreActivity.this, RegisterActivity.class);
-            intent.putExtra("returnedUser", true);
+            if (FirebaseAT.getAuth().getCurrentUser().getEmail() == null ) {
+                intent.putExtra("returnedUser", false);
+            } else {
+                intent.putExtra("returnedUser",true);
+            }
             startActivity(intent);
         });
 
@@ -162,7 +164,6 @@ public class InStoreActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data: snapshot.getChildren()) {
                     if(data.getKey().equals(FirebaseAT.getAuth().getUid())) {
-                        toast(InStoreActivity.this, data.getKey());
                         user = data.getValue(User.class);
                         updateBadge();
                     }

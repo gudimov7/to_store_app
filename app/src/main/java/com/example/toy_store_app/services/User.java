@@ -11,7 +11,6 @@ public class User {
 
     private String id, name, phone;
     private Address address;
-    private boolean isAdmin;
     private Order order;
 
     public User() {
@@ -23,7 +22,6 @@ public class User {
         this.id = id;
         this.name = name;
         this.phone = phone;
-        this.isAdmin = isAdmin;
         this.address = address;
 
     }
@@ -58,14 +56,6 @@ public class User {
 
     public void setAddress(Address address) {
         this.address = address;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
     }
 
     public Order getOrder() {

@@ -1,7 +1,6 @@
 package com.example.toy_store_app.services;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class OrderCompleted extends Order{
     private User user;

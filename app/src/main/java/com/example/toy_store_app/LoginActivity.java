@@ -57,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }).addOnFailureListener(authResult -> {
                     toast(this, "login denied");
-                    log(LoginActivity.class,username + ": logg in failed");
-                    logToFireBase(this,username + ": logg in failed");
+                    log(LoginActivity.class,username + ": login failed");
+                    logToFireBase(this,username + ": login failed");
                 });
 
             } else {
@@ -66,9 +66,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         }); //login with username and password
         anonymousBtn.setOnClickListener((v) -> FirebaseAT.getAuth().signInAnonymously().addOnSuccessListener(authResult -> {
+            startActivity(new Intent(LoginActivity.this, InStoreActivity.class));
             toast(this,"Login successfully");
-            log(LoginActivity.class,"anonymous\tlogged in successfully");
-            logToFireBase(this,"anonymous\tlogged in successfully");
+            log(LoginActivity.class,"anonymous login successfully");
+            logToFireBase(this,"anonymous login successfully");
         }).addOnFailureListener(authResult -> toast(this, "login failed"))); //login anonymously
         registerBtn.setOnClickListener((v) -> startActivity(new Intent(LoginActivity.this, RegisterActivity.class)));//move to register activity
         adminCB.setOnClickListener(view -> {

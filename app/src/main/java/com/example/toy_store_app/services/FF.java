@@ -109,11 +109,9 @@ public abstract class FF {
                 .child(FirebaseAT.getAuth().getUid())
                 .updateChildren(map, (error, ref) -> {
                     if (error == null) {
-                        toast(context,key + ": update key successful");
                         log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
                         logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
                     } else {
-                        toast(context,key + ": update key failed");
                         log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
                         logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
                     }

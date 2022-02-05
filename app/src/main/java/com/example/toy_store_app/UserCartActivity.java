@@ -55,12 +55,14 @@ public class UserCartActivity extends AppCompatActivity {
         backToShoppingBtn.setOnClickListener(v -> finish());
         purchaseBtn.setOnClickListener((v) -> {
 
-            if( FirebaseAT.getAuth().getUid() == null) {
+            //if anonymous user logged in
+            if( FirebaseAT.getAuth().getCurrentUser().getEmail() == null) {
                 Intent registerNewIntent = new Intent(this,RegisterActivity.class);
-                registerNewIntent.putExtra("returnedUser", true);
+                registerNewIntent.putExtra("returnedUser", false);
                 startActivity(registerNewIntent);
             }
 
+            //if cart not empty
             if(!user.getOrder().getCart().isEmpty()) {
                 //update owner list
                 OrderCompleted completedOrder = new OrderCompleted(
@@ -76,6 +78,7 @@ public class UserCartActivity extends AppCompatActivity {
                         .setValue(completedOrder);
                 user.getOrder().getCart().clear();
                 updateUserChildren(this,User.USER_ORDER,user.getOrder());
+                toast(this,"Order submitted");
 
 
                 //send email to buyer
