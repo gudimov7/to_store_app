@@ -27,10 +27,12 @@ public class Order {
     }
 
     public float getTotalPrice() {
+        this.setTotalPrice();
         return totalPrice;
     }
 
     private boolean setTotalPrice(){
+        totalPrice = 0;
         if (cart != null) {
             for (StoreItem item: cart)
                 this.totalPrice += item.getPrice();
@@ -44,13 +46,11 @@ public class Order {
             cart = new ArrayList<>();
         }
         cart.add(item);
-        setTotalPrice();
     }
 
     public boolean removeItemFromCart(StoreItem item) {
         if (cart != null && cart.contains(item)) {
             cart.remove(item);
-            setTotalPrice();
             return true;
         }
         return false;

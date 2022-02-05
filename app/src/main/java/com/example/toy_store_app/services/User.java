@@ -7,6 +7,7 @@ public class User {
     public static final String USER_ADDRESS = "address";
     public static final String USER_IS_ADMIN = "admin";
     public static final String USER_ORDER = "order";
+    public static final String USER_CART = "cart";
 
     private String id, name, phone;
     private Address address;

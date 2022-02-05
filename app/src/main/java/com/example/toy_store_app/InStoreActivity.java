@@ -209,4 +209,12 @@ public class InStoreActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> sortByAdp = ArrayAdapter.createFromResource(this, R.array.sort_by, R.layout.textview_spinner_single_row);
         sortSpinner.setAdapter(sortByAdp);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUser();
+        updateBadge();
+        getList();
+    }
 }

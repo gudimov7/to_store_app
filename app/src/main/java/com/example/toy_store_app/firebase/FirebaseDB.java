@@ -10,6 +10,7 @@ public class FirebaseDB {
     public static final String USERS_CHILD = "Users";
     public static final String TOYS_CHILD = "store_items";
     public static final String CART_CHILD = "order";
+    public static final String ORDER_CHILD = "completed_orders";
     public static final String FIREBASE_LOG_CHILD = "LOG";
     private static FirebaseDatabase database;
 
