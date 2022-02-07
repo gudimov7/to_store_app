@@ -62,7 +62,7 @@ public class InStoreActivity extends AppCompatActivity {
         inStoreItems = new ArrayList<>();
 
         refreshList();
-        itemsList.setOnItemClickListener(((parent, view, position, id) -> {
+        itemsList.setOnItemClickListener((parent, view, position, id) -> {
             Dialog dialog = new Dialog(InStoreActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_full_view);
 
@@ -102,7 +102,7 @@ public class InStoreActivity extends AppCompatActivity {
             dialog.show();
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        }));
+        });
 
         cartBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, UserCartActivity.class)));
         userInfoBtn.setOnClickListener(v -> {
@@ -155,8 +155,8 @@ public class InStoreActivity extends AppCompatActivity {
     }
 
     private void getList() {
-        StoreItemListViewAdapter SIA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
-        itemsList.setAdapter(SIA);
+        StoreItemListViewAdapter SILVA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
+        itemsList.setAdapter(SILVA);
     }
     private void getUser() {
         FirebaseDB.getDataReference().child(FirebaseDB.USERS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {

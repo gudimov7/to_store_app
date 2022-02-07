@@ -202,7 +202,12 @@ public class RegisterActivity extends AppCompatActivity {
 
                 FirebaseAT.getAuth().createUserWithEmailAndPassword(email, password).addOnSuccessListener(authResult -> {
                     FirebaseUser fUser = FirebaseAT.getAuth().getCurrentUser();
-                    user = new User(fUser.getUid(), name, phone, new Address(street, city, country));
+                    user = new User(
+                            fUser.getUid(),
+                            name,
+                            fUser.getEmail(),
+                            phone,
+                            new Address(street, city, country));
                     FirebaseDB.getDataReference().child(FirebaseDB.USERS_CHILD).child(fUser.getUid()).setValue(user);
                     toast(this,"User created successfully");
                     log(RegisterActivity.class,FirebaseAT.getAuth().getUid() + ": registered in successfully");

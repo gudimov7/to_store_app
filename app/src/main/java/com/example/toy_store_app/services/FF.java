@@ -42,7 +42,7 @@ public abstract class FF {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
     public static void log(Class c, String message) {
-        Log.d(c.getSimpleName(),message + "::" + Calendar.getInstance().getTime());
+        Log.d(c.getSimpleName(),message + "::" + calendarDate());
     }
     public static void showPassword(CheckBox checkBox, EditText password) {
         checkBox.setOnCheckedChangeListener((checkboxView, isChecked) -> {
@@ -64,7 +64,7 @@ public abstract class FF {
                 .child(LOG)
                 .child(context.getClass().getSimpleName())
                 .push()
-                .setValue(message + ": " + Calendar.getInstance().getTime());
+                .setValue(message + ": " + calendarDate());
     }
     public static boolean hasPermissions(Context context, String... permissions) {
         if (context != null && permissions != null) {
@@ -117,6 +117,22 @@ public abstract class FF {
                     }
                 });
     }
+    public static void updatePurchasesChildren(Context context, String key, Object value) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        FirebaseDB
+                .getDataReference()
+                .child(FirebaseDB.ORDER_CHILD)
+                .updateChildren(map, (error, ref) -> {
+                    if (error == null) {
+                        log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
+                        logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key successful");
+                    } else {
+                        log(context.getClass(), FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
+                        logToFireBase(context,FirebaseAT.getAuth().getUid() + ": " + key + ": update key failed");
+                    }
+                });
+    }
     public static void composeEmail(Context context, String[] addresses, String text) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
@@ -127,5 +143,16 @@ public abstract class FF {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(intent);
         } else Toast.makeText(context, "No suitable app for this action", Toast.LENGTH_SHORT).show();
+    }
+    public static String calendarDate() {
+        Calendar cal = Calendar.getInstance();
+        return String.format(
+                "%02d:%02d_%02d/%02d/%04d",
+                cal.get(Calendar.HOUR_OF_DAY),
+                cal.get(Calendar.MINUTE),
+                cal.get(Calendar.DAY_OF_MONTH),
+                cal.get(Calendar.MONTH) +1,
+                cal.get(Calendar.YEAR)
+        );
     }
 }

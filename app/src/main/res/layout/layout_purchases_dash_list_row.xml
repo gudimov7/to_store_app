@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="5">
+
+    <!-- order list position view-->
+    <TextView
+        android:id="@+id/layoutPurchaseOrder_tv_position"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="2"/>
+    <!-- name and date layout-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:layout_weight="1">
+        <!-- purchase buyer name-->
+        <TextView
+            android:id="@+id/layoutPurchaseOrder_tv_buyerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!-- purchase date view-->
+        <TextView
+            android:id="@+id/layoutPurchaseOrder_tv_purchaseDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <!-- purchase total price view-->
+    <TextView
+        android:id="@+id/layoutPurchaseOrder_tv_purchaseTotalPrice"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="2"/>
+</LinearLayout>

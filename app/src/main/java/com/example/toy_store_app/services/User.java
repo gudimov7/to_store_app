@@ -9,7 +9,7 @@ public class User {
     public static final String USER_ORDER = "order";
     public static final String USER_CART = "cart";
 
-    private String id, name, phone;
+    private String id, name,email, phone;
     private Address address;
     private Order order;
 
@@ -17,10 +17,11 @@ public class User {
         order = new Order();
     }
 
-    public User(String id, String name, String phone, Address address) {
+    public User(String id, String name,String email, String phone, Address address) {
         this();
         this.id = id;
         this.name = name;
+        this.email = email;
         this.phone = phone;
         this.address = address;
 
@@ -64,6 +65,14 @@ public class User {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:weightSum="5">
+    <!-- buyer name view-->
+    <TextView
+        android:id="@+id/singleOrderView_dialog_tv_buyerName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.3"
+        android:textAlignment="viewStart"
+        android:text="18sp"
+        android:textStyle="bold"/>
+    <!-- buyer cart list-->
+    <ListView
+        android:id="@+id/singleOrderView_dialog_lv_buyerList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.4" />
+    <!-- buttons layout-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_weight="2.3"
+        android:weightSum="1">
+        <!-- back button-->
+        <Button
+            android:id="@+id/singleOrderView_dialog_btn_backBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="back"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"/>
+        <!-- send button-->
+        <Button
+            android:id="@+id/singleOrderView_dialog_btn_sendBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:text="send"/>
+    </LinearLayout>
+
+</LinearLayout>

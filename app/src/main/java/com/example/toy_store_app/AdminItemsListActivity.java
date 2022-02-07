@@ -211,7 +211,7 @@ public class AdminItemsListActivity extends AppCompatActivity {
             Uri imgURI = null;
             if (data.hasExtra("data")) {
                 bmpImg = (Bitmap) data.getExtras().get("data");
-                imgPath = MediaStore.Images.Media.insertImage(getContentResolver(), bmpImg , Calendar.getInstance().getTime().toString()," ");
+                imgPath = MediaStore.Images.Media.insertImage(getContentResolver(), bmpImg , calendarDate()," ");
             } else {
                 imgURI = data.getData();
                 imgPath = imgURI.getPath();

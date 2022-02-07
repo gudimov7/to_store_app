@@ -68,7 +68,7 @@ public class UserCartActivity extends AppCompatActivity {
                 OrderCompleted completedOrder = new OrderCompleted(
                         user.getOrder().getCart(),
                         user,
-                        Calendar.getInstance().getTime().toString()
+                        calendarDate()
                 );
                 FirebaseDB
                         .getDataReference()
@@ -95,7 +95,6 @@ public class UserCartActivity extends AppCompatActivity {
 
                 finish();
             }
-
         });
 
         orderList.setOnItemClickListener(((parent, view, position, id) -> {

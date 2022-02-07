@@ -12,8 +12,10 @@
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_register.xml" value="0.25" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/activity_user_cart.xml" value="0.25" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/dialog_login_as_admin.xml" value="0.16576086956521738" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/dialog_purchases_single_order_view.xml" value="0.2" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/dialog_store_item_add_new.xml" value="0.1" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/dialog_store_item_full_view.xml" value="0.1" />
+        <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/layout_purshases_dash_list_row.xml" value="0.2" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/layout_store_item_admin_dash.xml" value="0.264" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/layout_store_item_client_view.xml" value="0.21927083333333333" />
         <entry key="..\:/code/Android/Toy_Store_app2/app/src/main/res/layout/textview_spinner_single_row.xml" value="0.12407407407407407" />

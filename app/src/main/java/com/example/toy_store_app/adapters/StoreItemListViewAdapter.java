@@ -18,9 +18,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class StoreItemListViewAdapter extends ArrayAdapter<StoreItem> {
-    private ArrayList<StoreItem> storeItems;
-    private Context context;
-    private int resource;
+    private final ArrayList<StoreItem> storeItems;
+    private final Context context;
+    private final int resource;
 
     public StoreItemListViewAdapter(@NonNull Context context, int resource, @NonNull ArrayList<StoreItem> storeItems) {
         super(context, resource, storeItems);
