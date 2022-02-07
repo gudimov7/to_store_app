@@ -52,7 +52,7 @@ public class AdminPurchaseDashActivity extends AppCompatActivity {
             Button backBtn = (Button) dialog.findViewById(R.id.singleOrderView_dialog_btn_backBtn);
             Button sendBtn = (Button) dialog.findViewById(R.id.singleOrderView_dialog_btn_sendBtn);
 
-            singleOrderRefreshList(position);
+            singleOrderRefreshList(orders.get(position).getCart());
             buyerName.setText(orders.get(position).getUser().getName());
 
             backBtn.setOnClickListener(v -> dialog.dismiss());
@@ -86,8 +86,12 @@ public class AdminPurchaseDashActivity extends AppCompatActivity {
         OrdersListViewAdapter OLVA = new OrdersListViewAdapter(AdminPurchaseDashActivity.this,R.layout.layout_purchases_dash_list_row, orders);
         purchaseList.setAdapter(OLVA);
     }
-    private void singleOrderRefreshList(int position) {
-        StoreItemListViewAdapter SILVA = new StoreItemListViewAdapter(AdminPurchaseDashActivity.this,R.layout.layout_purchases_dash_list_row, orders.get(position).getCart());
+    private void singleOrderRefreshList(ArrayList<StoreItem> cart) {
+        StoreItemListViewAdapter SILVA = new StoreItemListViewAdapter(
+                AdminPurchaseDashActivity.this,
+                R.layout.layout_store_item_list_row,
+                cart
+        );
         singleOrderList.setAdapter(SILVA);
     }
     private void getOrders() {
