@@ -23,6 +23,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * Activity show User obj / Register new User obj
+ * @author Vyacheslav Gudimov
+ */
 public class RegisterActivity extends AppCompatActivity {
     private TextView headerTV;
 
@@ -47,15 +51,23 @@ public class RegisterActivity extends AppCompatActivity {
 
     private User user;
 
+    /**
+     * first function to start as activity starts
+     * @param savedInstanceState if has memory
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().hide();
 
+        /*
+        get extra boolean data -> user exist true/false from other activity
+         */
         Intent onStartIntent = getIntent();
         boolean returnedUser = onStartIntent.getBooleanExtra("returnedUser", false);
 
+        //initiate activity views on create
         headerTV = (TextView) findViewById(R.id.registrationActivity_tv_header);
 
         nameET = (EditText) findViewById(R.id.registrationActivity_et_name);
@@ -77,17 +89,25 @@ public class RegisterActivity extends AppCompatActivity {
         clearBtn = (Button) findViewById(R.id.registrationActivity_btn_clear);
         submitBtn = (Button) findViewById(R.id.registrationActivity_btn_submit);
 
+        //initiate User obj
         user = new User();
 
+        /**
+         * if intent extra data true
+         * only show user data
+         * else create new User
+         */
         if (returnedUser) {
             viewCurrentUserActivity();
         } else {
             createNewUserActivity();
         }
 
-
     }
 
+    /**
+     * if user exist show user with Firebase database
+     */
     private void viewCurrentUserActivity() {
         //change header text
         headerTV.setText("USER");
@@ -138,17 +158,21 @@ public class RegisterActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        log(RegisterActivity.class,"show user canceled");
+                        logToFireBase(RegisterActivity.this,"show user canceled");
                     }
                 });
 
-
-
-        //buttons on click actions
+        //edit button (clear button) on click listener -> run editReturnedUser()
         clearBtn.setOnClickListener(v -> editReturnedUser());
+
+        //close button (submit button) on click listener -> finish Register activity
         submitBtn.setOnClickListener(v -> finish());
     }
 
+    /**
+     * if user not exist create new user and register to Firebase
+     */
     private void createNewUserActivity() {
         //set TextViews invisible
         nameTV.setVisibility(View.GONE);
@@ -172,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
         clearBtn.setText("Clear");
         submitBtn.setText("Submit");
 
-        //buttons on click actions
+        //on clear button click listener -> empty EditText views
         clearBtn.setOnClickListener(v -> {
             nameET.setText("");
             emailET.setText("");
@@ -182,6 +206,8 @@ public class RegisterActivity extends AppCompatActivity {
             cityET.setText("");
             countryET.setText("");
         });
+
+        //on submit button clicked listener -> create new user ->write User obj to Firebase
         submitBtn.setOnClickListener(v -> {
             if (
                     !isEditTextEmpty(nameET) &&
@@ -225,6 +251,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * if user exist wish to edit data
+     */
     private void editReturnedUser() {
         //set TextViews invisible
         nameTV.setVisibility(View.GONE);
@@ -257,7 +286,7 @@ public class RegisterActivity extends AppCompatActivity {
         clearBtn.setText("Clear");
         submitBtn.setText("Submit");
 
-        //buttons on click actions
+        //clear button on click listener -> set all edit text with empty String
         clearBtn.setOnClickListener(v -> {
             nameET.setText("");
             emailET.setText("");
@@ -267,6 +296,8 @@ public class RegisterActivity extends AppCompatActivity {
             cityET.setText("");
             countryET.setText("");
         });
+
+        //submit button on click listener -> save all changed data
         submitBtn.setOnClickListener(v -> {
             if (
                     !isEditTextEmpty(nameET) &&
@@ -321,6 +352,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * if user wish to change password or email
+     * re-authenticate with Firebase auth task
+     */
     private OnCompleteListener onChangeCredentialCompleteListener = (task) -> {
         if (task.isSuccessful()) {
             toast(this,"update credential successful");

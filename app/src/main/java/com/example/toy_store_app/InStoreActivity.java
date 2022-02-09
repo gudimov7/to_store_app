@@ -36,6 +36,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Activity show In Store view
+ * @author Vyacheslav Gudimov
+ */
 public class InStoreActivity extends AppCompatActivity {
 
     private ListView itemsList;
@@ -46,26 +50,48 @@ public class InStoreActivity extends AppCompatActivity {
     private ImageButton cartBtn;
     private NotificationBadge cartBadge;
 
+    /**
+     * first function to start as activity starts
+     * @param savedInstanceState if has memory
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_store);
         getSupportActionBar().hide(); //hide title bar
-        user = new User();
-        getUser();
 
+        //initiate activity views
         itemsList = (ListView) findViewById(R.id.inStoreActivity_lv_itemsList);
         sortSpinner = (Spinner) findViewById(R.id.inStoreActivity_sp_sortSpinner);
         userInfoBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_userInfoBtn);
         cartBtn = (ImageButton) findViewById(R.id.inStoreActivity_ib_cartBtn);
         cartBadge = (NotificationBadge) findViewById(R.id.inStoreActivity_nb_cartBadge);
+
+        //initiate User obj
+        user = new User();
+
+        //initiate InStore StoreItem ArrayList
         inStoreItems = new ArrayList<>();
 
-        refreshList();
+        //initiate spinner button
+        sortSpinner.setPrompt("Sort by");
+        sortBy();
+
+        //initiate StoreItem's list
+        initiateStoreItemList();
+
+        //authenticate user with Firebase and get data
+        getUser();
+
+        /**
+         * set on ListView StoreItem click listener
+         */
         itemsList.setOnItemClickListener((parent, view, position, id) -> {
+            //start new dialog to show Item clicked full description
             Dialog dialog = new Dialog(InStoreActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_full_view);
 
+            //initiate dialog views
             TextView itemNameHeader = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemNameHeader);
             TextView itemName = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemName);
             TextView itemAge = dialog.findViewById(R.id.fullStoreItem_dialog_tv_itemAge);
@@ -77,6 +103,7 @@ public class InStoreActivity extends AppCompatActivity {
             Button backBtn = dialog.findViewById(R.id.fullStoreItem_dialog_btn_back);
             Button buyBtn = dialog.findViewById(R.id.fullStoreItem_dialog_btn_buy);
 
+            //set data to views with Item clicked data
             itemNameHeader.setText(inStoreItems.get(position).getItemName());
             itemName.setText("Name:\t" + inStoreItems.get(position).getItemName());
             itemAge.setText("Age:\t" + inStoreItems.get(position).getDescription().getAge() + "+");
@@ -86,7 +113,10 @@ public class InStoreActivity extends AppCompatActivity {
             itemPrice.setText(String.format("Price:\t%.2f$", inStoreItems.get(position).getPrice()));
             Picasso.get().load(inStoreItems.get(position).getPic()).resize(70,70).into(itemPic);
 
+            //set back button click Listener -> dismiss dialog
             backBtn.setOnClickListener(v -> dialog.dismiss());
+
+            //set buy button click listener -> add StoreItem to User obj cart -> dismiss dialog
             buyBtn.setOnClickListener(v-> {
                 user.getOrder().addItemToCart(inStoreItems.get(position));
                 FirebaseDB
@@ -100,11 +130,20 @@ public class InStoreActivity extends AppCompatActivity {
             });
 
             dialog.show();
+
+            //set dialog window width match parent height wrap content
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         });
 
+        /**
+         * set cart button click listener -> start UserCart activity
+         */
         cartBtn.setOnClickListener(v -> startActivity(new Intent(InStoreActivity.this, UserCartActivity.class)));
+
+        /**
+         * set on user button click listener -> start Register activity with extra data -> true if existing user / false if anonymous
+         */
         userInfoBtn.setOnClickListener(v -> {
             Intent intent  = new Intent(InStoreActivity.this, RegisterActivity.class);
             if (FirebaseAT.getAuth().getCurrentUser().getEmail() == null ) {
@@ -115,35 +154,37 @@ public class InStoreActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        sortSpinner.setPrompt("Sort by");
-        sortBy();
+        /**
+         * set on SpinnerList item clicked -> sort list by switch case
+         */
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sortSpinner.getChildAt(0).setClickable(false);
                 switch (position) {
-                    case 1:
+                    case 1: //sort by name a-z
                         Collections.sort(inStoreItems, (o1, o2) ->{
                             return o1.getItemName().compareTo(o2.getItemName());
                         });
                         break;
-                    case 2:
+                    case 2: //sort by name z-a
                         Collections.sort(inStoreItems, (o1, o2) -> {
                             return o2.getItemName().compareTo(o1.getItemName());
                         });
                         break;
-                    case 3:
+                    case 3: //sort by price l-h
                         Collections.sort(inStoreItems, (o1, o2) -> {
                             return (int)( o1.getPrice() - o2.getPrice());
                         });
                         break;
-                    case 4:
+                    case 4: //sort by price h-l
                         Collections.sort(inStoreItems, (o1, o2) -> {
                             return (int)( o2.getPrice() - o1.getPrice());
                         });
                         break;
                 }
-                getList();
+                //refresh ListView with new sort
+                refreshList();
             }
 
             @Override
@@ -154,10 +195,17 @@ public class InStoreActivity extends AppCompatActivity {
 
     }
 
-    private void getList() {
+    /**
+     * refresh StoreItem adapter
+     */
+    private void refreshList() {
         StoreItemListViewAdapter SILVA = new StoreItemListViewAdapter(InStoreActivity.this,R.layout.layout_store_item_list_row, inStoreItems);
         itemsList.setAdapter(SILVA);
     }
+
+    /**
+     * authenticate user with Firebase and create User obj from Firebase data
+     */
     private void getUser() {
         FirebaseDB.getDataReference().child(FirebaseDB.USERS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -177,7 +225,12 @@ public class InStoreActivity extends AppCompatActivity {
             }
         });
     }
-    private void refreshList() {
+
+    /**
+     * get items from Firebase realTime database
+     * create new StoreItem arrayList
+     */
+    private void initiateStoreItemList() {
         inStoreItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -192,7 +245,7 @@ public class InStoreActivity extends AppCompatActivity {
                     }
                     inStoreItems.add(item);
                 }
-                getList();
+                refreshList();
                 log(InStoreActivity.class,"fetched item list successfully");
             }
 
@@ -203,28 +256,47 @@ public class InStoreActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * set cart button badge with User obj cart size
+     */
     private void updateBadge() {
         cartBadge.setNumber(user.getOrder().getCart().size());
     }
+
+    /**
+     * sort by spinner list adapter
+     */
     private void sortBy() {
-        // sort ny spinner list view
         ArrayAdapter<CharSequence> sortByAdp = ArrayAdapter.createFromResource(this, R.array.sort_by, R.layout.textview_spinner_single_row);
         sortSpinner.setAdapter(sortByAdp);
     }
 
+    /**
+     * on resume activity
+     * re-get user
+     * refresh Store item list
+     * update cart badge
+     */
     @Override
     protected void onResume() {
         super.onResume();
         getUser();
-        getList();
+        refreshList();
         updateBadge();
     }
 
+    /**
+     * on restart activity
+     * re-get user
+     * refresh Store item list
+     * update cart badge
+     */
     @Override
     protected void onRestart() {
         super.onRestart();
         getUser();
-        getList();
+        refreshList();
         updateBadge();
     }
 }

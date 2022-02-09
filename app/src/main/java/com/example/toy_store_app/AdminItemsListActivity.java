@@ -35,8 +35,11 @@ import static com.example.toy_store_app.services.FF.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 
+/**
+ * Admin Activity show all StoreItems InFirebase / add new Item
+ * @author Vyacheslav Gudimov
+ */
 public class AdminItemsListActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 1;
     private ListView itemsLV;
@@ -47,20 +50,32 @@ public class AdminItemsListActivity extends AppCompatActivity {
     private Bitmap bmpImg;
     private String imgPath;
 
+    /**
+     * first function to start as activity starts
+     * @param savedInstanceState if has memory
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_items_list);
         getSupportActionBar().hide();
 
-        storeItems = new ArrayList<>();
-
+        //initiate all activity views
         itemsLV = (ListView) findViewById(R.id.adminItemListActivity_lv_storeItemList);
         addBtn = (Button) findViewById(R.id.adminItemListActivity_btn_add);
 
+        //initiate storeItem Arraylist
+        storeItems = new ArrayList<>();
+
+        /**
+         * add button click listener -> open dialog create new StoreItem
+         */
         addBtn.setOnClickListener(v -> {
+            //open new dialog
             dialog = new Dialog(AdminItemsListActivity.this);
             dialog.setContentView(R.layout.dialog_store_item_add_new);
+
+            //initiate all dialog views
             itemPicIV = (ImageButton) dialog.findViewById(R.id.adminStoreItem_dialog_iv_itemPic);
             EditText itemNameET = (EditText) dialog.findViewById(R.id.adminStoreItem_dialog_et_itemName);
             EditText itemAgeET = (EditText) dialog.findViewById(R.id.adminStoreItem_dialog_et_itemAge);
@@ -71,6 +86,13 @@ public class AdminItemsListActivity extends AppCompatActivity {
             Button addBtn = (Button) dialog.findViewById(R.id.adminStoreItem_dialog_btn_add);
             Button clearBtn = (Button) dialog.findViewById(R.id.adminStoreItem_dialog_btn_clear);
 
+            /**
+             * pic button click listener -> start new take pic intent
+             * name field cannot be empty
+             * ask camera use permissions if needed
+             * ask write to storage permissions if needed
+             * ask read storage permissions if needed
+             */
             itemPicIV.setOnClickListener(iv -> {
                 if (!isEditTextEmpty(itemNameET)) {
                     Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -88,6 +110,10 @@ public class AdminItemsListActivity extends AppCompatActivity {
                     startActivityForResult(chooserIntent, PICK_IMAGE);
                 }
             });
+
+            /**
+             * clear button click listener -> set all fields with empty String params
+             */
             clearBtn.setOnClickListener(cv -> {
                 itemNameET.setText("");
                 itemAgeET.setText("");
@@ -96,6 +122,15 @@ public class AdminItemsListActivity extends AppCompatActivity {
                 itemMadeET.setText("");
                 itemPriceET.setText("");
             });
+
+            /**
+             * add button click listener -> create new StoreItem
+             * -> add item To Firebase realtime database
+             * -> add img to Firebase Storage
+             * -> dismiss dialog
+             * ! non fields can be empty
+             * ! pic cannot be null
+             */
             addBtn.setOnClickListener(av -> {
                 if (
                         bmpImg != null &&
@@ -163,15 +198,21 @@ public class AdminItemsListActivity extends AppCompatActivity {
                 }
             });
 
-
             dialog.show();
+            //set dialog view width mach parent height wrap content
             Window window = dialog.getWindow();
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
         });
+
+        //refresh StoreItem ListView
         refreshLV();
     }
+
+    /**
+     * get all StoreItems from Firebase realtime database
+     */
     void refreshLV() {
         storeItems.clear();
         FirebaseDB.getDataReference().child(FirebaseDB.TOYS_CHILD).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -202,13 +243,27 @@ public class AdminItemsListActivity extends AppCompatActivity {
                 logToFireBase(AdminItemsListActivity.this,"refresh list got wrong");
             }
         });
-
     }
+
+    /**
+     * On camera button return result from camera or storage
+     * @param requestCode int with camera request code ${PICK_IMAGE}
+     * @param resultCode int activity result
+     * @param data Intent with extra data
+     * request permissions if needed
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //check if camera button requested result
         if (requestCode == PICK_IMAGE) {
+            //initiate img URI
             Uri imgURI = null;
+            /*
+                data intent has extra == intent from camera shot
+                -> create new image from camera shot result
+                else -> img from storage result
+             */
             if (data.hasExtra("data")) {
                 bmpImg = (Bitmap) data.getExtras().get("data");
                 imgPath = MediaStore.Images.Media.insertImage(getContentResolver(), bmpImg , calendarDate()," ");
@@ -218,6 +273,8 @@ public class AdminItemsListActivity extends AppCompatActivity {
                 try {
                     bmpImg = MediaStore.Images.Media.getBitmap(getContentResolver(), imgURI);
                 } catch (IOException e) {
+                    log(AdminItemsListActivity.class,"failed to store img: " + e.getMessage());
+                    logToFireBase(AdminItemsListActivity.this,"failed to store img: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
