@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <!-- username input -->
+    <EditText
+        android:id="@+id/loginDialog_et_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="USERNAME:"
+        android:autofillHints="emailAddress"
+        android:padding="10dp"/>
+    <!-- password with checkbox layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+        <!-- password input -->
+        <EditText
+            android:id="@+id/loginDialog_et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="PASSWORD:"
+            android:autofillHints="password"
+            android:inputType="textPassword"
+            android:padding="10dp"/>
+        <!-- password checkbox -->
+        <CheckBox
+            android:id="@+id/loginDialog_cb_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="9" />
+    </LinearLayout>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+    <!-- login button -->
+    <Button
+        android:id="@+id/loginDialog_btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="login" />
+</LinearLayout>
