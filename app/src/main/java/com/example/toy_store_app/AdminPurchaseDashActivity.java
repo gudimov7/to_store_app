@@ -55,7 +55,7 @@ public class AdminPurchaseDashActivity extends AppCompatActivity {
         //set on ListView OrderCompleted click listener
         purchaseList.setOnItemClickListener((parent, view, position, id) -> {
             //start new dialog
-            Dialog dialog = new Dialog(this);
+            Dialog dialog = new Dialog(AdminPurchaseDashActivity.this);
             dialog.setContentView(R.layout.dialog_purchases_single_order_view);
 
             //initiate dialog views

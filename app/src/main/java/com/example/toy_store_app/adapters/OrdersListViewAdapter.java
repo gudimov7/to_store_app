@@ -61,7 +61,7 @@ public class OrdersListViewAdapter extends ArrayAdapter <OrderCompleted> {
         TextView orderTotalPrice = (TextView) convertView.findViewById(R.id.layoutPurchaseOrder_tv_purchaseTotalPrice);
 
         //set params to inner views from OrderCompleted obj in position
-        layout.setBackgroundColor(Color.RED);
+//        layout.setBackgroundColor(Color.RED);
         orderPosition.setText("#" + position +1);
         orderBuyerName.setText(orders.get(position).getUser().getName());
         orderPurchaseDate.setText(orders.get(position).getDate());

@@ -1,5 +1,6 @@
 package com.example.toy_store_app.services;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,12 +11,18 @@ import android.os.Environment;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import com.example.toy_store_app.InStoreActivity;
+import com.example.toy_store_app.R;
+import com.example.toy_store_app.RegisterActivity;
 import com.example.toy_store_app.firebase.FirebaseAT;
 import com.example.toy_store_app.firebase.FirebaseDB;
 
@@ -220,5 +227,76 @@ public abstract class FF {
                 cal.get(Calendar.MONTH) +1,
                 cal.get(Calendar.YEAR)
         );
+    }
+
+    public static void handleAnonymous(Context context) {
+        Intent intent = new Intent(context, RegisterActivity.class);
+        //start new dialog
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.dialog_register_or_login);
+
+        //initiate all dialog views
+        Button loginBtn = (Button) dialog.findViewById(R.id.loginOrRegisterDialog_btn_login);
+        Button registerBtn = (Button) dialog.findViewById(R.id.loginOrRegisterDialog_btn_register);
+
+        /**
+             * set on login button click listener -> start new login dialog
+             */
+        loginBtn.setOnClickListener(dialogV -> {
+                //start new dialog
+                dialog.setContentView(R.layout.dialog_login);
+
+                //initiate all dialog views
+                EditText usernameET = (EditText) dialog.findViewById(R.id.loginDialog_et_username);
+                EditText passwordET = (EditText) dialog.findViewById(R.id.loginDialog_et_password);
+                CheckBox showPasswordBox = (CheckBox) dialog.findViewById(R.id.loginDialog_cb_password);
+                Button login = (Button) dialog.findViewById(R.id.loginDialog_btn_login);
+
+                /**
+                 * login set on click listener -> auth with Firebase
+                 * ->reload activity
+                 * ! username and password fields cannot be empty
+                 */
+                login.setOnClickListener(nextDialogV -> {
+                    if (!isEditTextEmpty(usernameET) && !isEditTextEmpty(passwordET)) {
+                        String username = usernameET.getText().toString();
+                        String password = passwordET.getText().toString();
+
+                        FirebaseAT.getAuth().signInWithEmailAndPassword(username, password).addOnSuccessListener(authResult -> {
+
+                            toast(context, "Login successfully");
+                            log(context.getClass(), username + ": logged in successfully");
+                            logToFireBase(context, username + ": logged in successfully");
+                            dialog.dismiss();
+                        }).addOnFailureListener(authResult -> {
+                            toast(context, "login denied");
+                            log(context.getClass(), username + ": login failed");
+                            logToFireBase(context, username + ": login failed");
+                        });
+
+                    } else {
+                        toast(context, "Please enter username and password");
+                    }
+                });
+
+                //set on check reveal password
+                showPassword(showPasswordBox, passwordET);
+            });
+
+        /**
+             * set on register btn click listener -> start register activity
+             */
+        registerBtn.setOnClickListener(dialogV -> {
+                intent.putExtra("returnedUser", false);
+                dialog.dismiss();
+                context.startActivity(intent);
+            });
+
+        //show dialog
+        dialog.show();
+        //set dialog view width match parent height wrap content
+        Window window = dialog.getWindow();
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
     }
 }

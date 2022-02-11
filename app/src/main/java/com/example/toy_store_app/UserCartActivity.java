@@ -71,13 +71,9 @@ public class UserCartActivity extends AppCompatActivity {
          *                              * send Store owner email message with order
          */
         purchaseBtn.setOnClickListener((v) -> {
-
             //if anonymous user logged in
-            if( FirebaseAT.getAuth().getCurrentUser().getEmail() == null) {
-                Intent registerNewIntent = new Intent(this,RegisterActivity.class);
-                registerNewIntent.putExtra("returnedUser", false);
-                startActivity(registerNewIntent);
-            }
+            if( FirebaseAT.getAuth().getCurrentUser().getEmail() == null)
+                handleAnonymous(UserCartActivity.this);
 
             //if cart not empty
             if(!user.getOrder().getCart().isEmpty()) {
@@ -93,19 +89,22 @@ public class UserCartActivity extends AppCompatActivity {
                         .child(user.getId())
                         .push()
                         .setValue(completedOrder);
-                user.getOrder().getCart().clear();
-                updateUserChildren(this,User.USER_ORDER,user.getOrder());
+
                 toast(this,"Order submitted");
 
 
                 //send email to buyer
                 String mailText = String.format("This buyer \'%s\'\n" +
                         "has completed his online purchase\n\n", user.getName());
-                for(StoreItem item: user.getOrder().getCart())
-                    mailText = mailText.concat( item.toString() + "\n");
-                mailText = mailText.concat(String.format("Total price %.2f $\n", user.getOrder().getTotalPrice()));
+                for(StoreItem item: completedOrder.getCart())
+                    mailText = mailText.concat(item.toString() + "\n");
+                mailText = mailText.concat(String.format("Total price %.2f $\n", completedOrder.getTotalPrice()));
                 mailText = mailText.concat("\nCostumer:\n" + user.toString());
                 composeEmail(this,new String[]{"gudimov7@gmail.com"}, mailText);
+
+                //clear users complete order
+                user.getOrder().getCart().clear();
+                updateUserChildren(this, User.USER_ORDER, user.getOrder());
 
                 log(UserCartActivity.class,FirebaseAT.getAuth().getUid() + " : Order completed");
                 logToFireBase(this,FirebaseAT.getAuth().getUid() + " : Order completed");
